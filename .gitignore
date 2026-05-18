@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+
+# Mac
+.DS_Store
+
+# Local environment variables
+.env
+
+# Streamlit local secrets
+.streamlit/secrets.toml
+
+# Inquiry data containing personal information
+data/*.csv
+
+# Virtual environments
+.venv/
+venv/
