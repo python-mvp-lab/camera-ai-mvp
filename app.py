@@ -21,16 +21,6 @@ MASTER_DIR.mkdir(exist_ok=True)
 PLAN_CSV_PATH = MASTER_DIR / "plan_master.csv"
 OPTION_CSV_PATH = MASTER_DIR / "option_master.csv"
 
-ATMOSPHERES = ["自然体", "温かい", "きれいめ", "観光らしい", "かっこいい", "やさしい"]
-
-ATMOSPHERE_COMMENTS = {
-    "自然体": "ありのままの表情を大切にします。演じすぎない、自然な姿を残します。",
-    "温かい": "人と人とのつながりや、その場の温もりが伝わる写真を目指します。",
-    "きれいめ": "上品でクリーンな印象になるよう、光や構図を整えて撮影します。",
-    "観光らしい": "飛騨高山らしい風景や文化が伝わる背景も大切にします。",
-    "かっこいい": "光と影、構図を意識して、印象に残る写真を目指します。",
-    "やさしい": "やわらかい光と穏やかな雰囲気で、心に残る写真に仕上げます。",
-}
 
 NOTICE_TEXT = """
 **【ご予約前にご確認ください】**
@@ -121,7 +111,7 @@ def yen(amount: int | None) -> str:
     return f"¥{amount:,}"
 
 
-def build_plan_result(plan: pd.Series, atmosphere: str) -> dict:
+def build_plan_result(plan: pd.Series) -> dict:
     return {
         "おすすめメニュー": plan["menu_name"],
         "プラン": plan["plan_variant"],
@@ -129,7 +119,7 @@ def build_plan_result(plan: pd.Series, atmosphere: str) -> dict:
         "撮影場所": plan["location_type"],
         "納品方法": plan["delivery_method"],
         "納品枚数の目安": plan["delivery_count"],
-        "提案コメント": str(plan["recommendation"]) + ATMOSPHERE_COMMENTS.get(atmosphere, ""),
+        "提案コメント": str(plan["recommendation"]),
         "ロケーションコメント": plan["location_comment"],
         "注意事項": plan["notes"],
     }
@@ -210,8 +200,6 @@ with tab1:
 
     selected_plan = filtered_plans[filtered_plans["plan_variant"] == selected_variant].iloc[0]
 
-    atmosphere = st.selectbox("希望する雰囲気", ATMOSPHERES)
-
     st.subheader("基本情報")
     st.write(f"**基本料金：** {yen(int(selected_plan['base_price'])) if selected_plan['price_mode'] == '固定' else '要相談'}")
     st.write(f"**撮影時間：** {selected_plan['shooting_time']}")
@@ -247,7 +235,7 @@ with tab1:
                 selected_options.append(row._asdict())
 
     if st.button("おすすめプランと料金を表示する"):
-        result = build_plan_result(selected_plan, atmosphere)
+        result = build_plan_result(selected_plan)
         total_price, price_details = calculate_total(selected_plan, selected_options)
 
         st.session_state.latest_result = result
@@ -256,7 +244,6 @@ with tab1:
         st.session_state.latest_inputs = {
             "撮影メニュー": selected_menu,
             "プラン": selected_variant,
-            "雰囲気": atmosphere,
             "選択オプション": " / ".join([option["option_name"] for option in selected_options]) if selected_options else "なし",
         }
 
