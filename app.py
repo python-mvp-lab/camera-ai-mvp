@@ -208,7 +208,8 @@ with tab1:
     st.write(f"**納品枚数：** {selected_plan['delivery_count']}")
 
     plan_mask = (option_df["target_plan"] == "") | (option_df["target_plan"] == selected_variant)
-    applicable_options = option_df[(option_df["target_menu"] == selected_menu) & plan_mask].copy()
+    menu_mask = (option_df["target_menu"] == selected_menu) | (option_df["target_menu"] == "")
+    applicable_options = option_df[menu_mask & plan_mask].copy()
 
     selected_options: list[dict] = []
     if not applicable_options.empty:
@@ -230,7 +231,7 @@ with tab1:
         # checkbox形式のオプション。複数選択できる。
         checkbox_options = applicable_options[applicable_options["selection_type"] == "checkbox"]
         for row in checkbox_options.itertuples():
-            label = f"{row.option_name}（+{row.price_delta:,}円）"
+            label = row.option_name if row.price_delta == 0 else f"{row.option_name}（+{row.price_delta:,}円）"
             if st.checkbox(label, key=f"checkbox_{selected_menu}_{selected_variant}_{row.option_name}"):
                 selected_options.append(row._asdict())
 

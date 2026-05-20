@@ -60,3 +60,4 @@ active,target_menu,target_plan,option_name,price_delta,selection_type,group_name
 1,結婚式(当日),,高山市外送料,1500,checkbox,送料,アルバム等のお届け時に別途送料,60
 1,プロフィール動画,,USBメモリ,3000,checkbox,納品,USBメモリでの納品,50
 1,店舗・商品撮影,,USBメモリ,3000,checkbox,納品,USBメモリでの納品,50
+1,,,未定（あとで決めたい・相談したい）,0,checkbox,その他,オプションは後ほどご相談ください,99
