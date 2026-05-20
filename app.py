@@ -1,5 +1,6 @@
 import os
 import urllib.parse
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -167,6 +168,8 @@ if "latest_price_details" not in st.session_state:
     st.session_state.latest_price_details = []
 if "latest_inputs" not in st.session_state:
     st.session_state.latest_inputs = {}
+if "inquiry_log" not in st.session_state:
+    st.session_state.inquiry_log = []
 
 
 # =========================
@@ -298,9 +301,35 @@ with tab2:
             st.caption("LINEが開いたら、内容を確認して送信してください。")
         else:
             st.warning("LINE_OA_ID が設定されていません。管理者にお問い合わせください。")
-            
+
+        if st.button("この内容をCSVに記録する", use_container_width=True):
+            st.session_state.inquiry_log.append({
+                "作成日時": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "撮影メニュー": st.session_state.latest_inputs["撮影メニュー"],
+                "プラン": st.session_state.latest_inputs["プラン"],
+                "選択オプション": st.session_state.latest_inputs["選択オプション"],
+                "見積金額": yen(st.session_state.latest_price),
+                "希望日": str(preferred_date),
+                "お名前": name,
+                "相談内容": message,
+            })
+            st.success("記録しました。")
+
         with st.expander("送信内容のプレビュー"):
             st.code(line_message)
+
+        if st.session_state.inquiry_log:
+            st.divider()
+            df_log = pd.DataFrame(st.session_state.inquiry_log)
+            csv_data = df_log.to_csv(index=False, encoding="utf-8-sig")
+            st.download_button(
+                label="問い合わせ記録をCSVでダウンロード",
+                data=csv_data.encode("utf-8-sig"),
+                file_name=f"inquiry_log_{datetime.now().strftime('%Y%m%d')}.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
+            st.caption("※ データはこのセッション中のみ保持されます。ブラウザを閉じると消えます。サーバーには保存されません。")
 
 with tab3:
     st.header("料金表確認")
