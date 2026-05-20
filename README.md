@@ -63,6 +63,24 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+## Dockerでの起動方法
+
+Dockerを使う場合は、以下のコマンドでアプリを起動できます。
+
+```bash
+docker build -t camera-ai-mvp .
+```
+
+```bash
+docker run --rm -p 8501:8501 camera-ai-mvp
+```
+
+ブラウザで以下を開きます。
+
+```text
+http://localhost:8501
+```
+
 ## 工夫した点
 
 - 初めて利用する人でも分かりやすいように、入力から結果表示までの流れをシンプルにしました。
