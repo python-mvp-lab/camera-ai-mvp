@@ -6,6 +6,12 @@
 
 https://camera-ai-mvp.streamlit.app/
 
+## デモ動画
+
+アプリの操作イメージは以下の動画で確認できます。
+
+https://youtu.be/sBBLNCqqa5o
+
 ## 概要
 
 カメラマン向けの撮影プラン提案アプリです。
