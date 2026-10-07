@@ -87,6 +87,47 @@ docker run --rm -p 8501:8501 camera-ai-mvp
 http://localhost:8501
 ```
 
+## テストの実行方法
+
+```bash
+# 仮想環境を有効化（プロジェクトルートの .venv を使う場合）
+source ../.venv/bin/activate
+
+# 依存ライブラリのインストール（pytest を含む）
+pip install -r requirements.txt
+
+# テスト実行
+pytest tests/ -v
+```
+
+## 実務寄り改善として行ったこと
+
+### 責務の分離
+
+単一ファイル `app.py` に混在していた処理を以下のように分割しました。
+
+| ファイル | 責務 |
+|---|---|
+| `app.py` | Streamlit の画面表示・セッション管理 |
+| `pricing.py` | 料金計算ロジック（`calculate_total`・`yen`） |
+
+料金計算はStreamlitに依存しない純粋な関数のため、切り出すことでテスト可能になります。
+
+### テストの追加
+
+`tests/test_pricing.py` に pytest テストを追加しました（10ケース）。
+
+- `yen()` の書式変換（整数・ゼロ・None）
+- `calculate_total()` の基本料金・オプション加算
+- `price_mode = 要相談` の場合の返却値
+- `note` キーなし辞書への安全な対応
+
+### CSVバリデーション
+
+CSV読み込み時に必須列の存在チェックを行い、列不足の場合はアプリ起動時にエラーメッセージを表示して停止します（`load_csv()` 関数、`app.py` 内）。
+
+---
+
 ## 工夫した点
 
 - 初めて利用する人でも分かりやすいように、入力から結果表示までの流れをシンプルにしました。
